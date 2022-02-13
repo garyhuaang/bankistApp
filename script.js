@@ -4,28 +4,28 @@
 
 // Data
 const account1 = {
-  owner: 'js',
+  owner: 'Jonas Schmedtmann',
   movements: [200, 455.23, -305.50, 25000, -642.21, -133.90, 79.97, 1300],
   interestRate: 1.2, // %
   pin: 1111,
 };
 
 const account2 = {
-  owner: 'jd',
+  owner: 'Jessica Davis',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
 };
 
 const account3 = {
-  owner: 'stw',
+  owner: 'Steven Thomas Williams',
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
 };
 
 const account4 = {
-  owner: 'ss',
+  owner: 'Sarah Smith',
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
@@ -63,19 +63,19 @@ const inputClosePin = document.querySelector('.form__input--pin');
 //////////////////// FUNCTIONS /////////////////////////////
 //////////////////// FUNCTIONS /////////////////////////////
 // Updates UI
-const updateUI = (user) => {
+const updateUI = user => {
   displayMovements(user); // display transactions of user
 
   updateBalance(user); // updates and displays user's banking information
 }
 
 // Inserts commas as seperators for thousands
-const numberWithCommas = (num) => {
+const numberWithCommas = num => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // Diplay deposit and withdrawls and respective amounts
-const displayMovements = (user) => {
+const displayMovements = user => {
   const movements = user.movements;
   containerMovements.innerHTML = ''; // empty html to be filled in
 
@@ -145,7 +145,7 @@ const updateBalance = (user, loan = 0, trans = 0) => {
   const movements = user.movements;
 
   // calculating balance for user
-  movements.forEach((move) => {
+  movements.forEach(move => {
     balance += move;
     move > 0 ? sumIn += move : sumOut += move;
   });
@@ -169,26 +169,38 @@ const updateBalance = (user, loan = 0, trans = 0) => {
 const verifyUser = (user, pw) => {
   console.log(`user: ${user}, pw: ${pw}`);
   for (const account of accounts) {
-    if (account.owner === user && account.pin === Number(pw)) return account;
+    if (account.userName === user && account.pin === Number(pw)) return account;
   }
   alert('No account found, please verify credentials 🥸')
   return null;
 };
 
 // Remove user 
-const removeUser = (user) => {
-  const newAccounts = accounts.filter((acc) => acc.owner !== user.owner);
+const removeUser = user => {
+  const newAccounts = accounts.filter(acc => acc.owner !== user.owner);
 
   accounts = newAccounts;
 };
 
+// Creates userName for each account oject
+const createUserName = accs => {
+  accs.forEach(acc => {
+    acc.userName = acc.owner // assign userName key-value pair
+      .toLowerCase()  // make name lower case first
+      .split(' ') // split into array by ' ' delimiter
+      .map(name => name[0]) // loops through each name creating shallow copy, extracts first element
+      .join('');  // join each array into one single array
+  });
+}
 
 //////////////////// EVENT LISTENERS ///////////////////////
 //////////////////// EVENT LISTENERS ///////////////////////
 let activeUser = {};
 
-btnLogin.addEventListener('click', (e) => {
+btnLogin.addEventListener('click', e => {
   e.preventDefault();
+
+  createUserName(accounts);
 
   const user = verifyUser(inputLoginUsername.value, inputLoginPin.value);
   activeUser = user;
@@ -199,7 +211,7 @@ btnLogin.addEventListener('click', (e) => {
   inputLoginPin.blur();
 });
 
-btnClose.addEventListener('click', (e) => {
+btnClose.addEventListener('click', e => {
   e.preventDefault();
 
   const user = verifyUser(inputCloseUsername.value, inputClosePin.value);
@@ -211,7 +223,7 @@ btnClose.addEventListener('click', (e) => {
   inputClosePin.blur();
 });
 
-btnLoan.addEventListener('click', (e) => {
+btnLoan.addEventListener('click', e => {
   e.preventDefault();
 
   const loan = Number(inputLoanAmount.value);
@@ -223,7 +235,7 @@ btnLoan.addEventListener('click', (e) => {
   inputLoanAmount.blur();
 });
 
-btnTransfer.addEventListener('click', (e) => {
+btnTransfer.addEventListener('click', e => {
   e.preventDefault();
 
   const amount = Number(inputTransferAmount.value);
